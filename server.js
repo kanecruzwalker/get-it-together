@@ -28,8 +28,8 @@ function runApp() {
     const viewDepartmentData = "View Departments"
     const removeDepartmentRow = "Remove Department"
     
-    const choice7 = "Add a new Role"
-    const choice8 = "View All Roles"
+    const addRoleRow = "Add a new Role"
+    const viewRoleData = "View All Roles"
     const choice9 = "Add Role"
     const choice10 = "Remove Role"
 
@@ -45,8 +45,8 @@ function runApp() {
                 addDepartmentRow,
                 viewDepartmentData,
                 removeDepartmentRow,
-                choice7,
-                choice8,
+                addRoleRow,
+                viewRoleData,
                 choice9,
                 choice10,
                 "EXIT"
@@ -73,11 +73,11 @@ function runApp() {
                 case removeDepartmentRow:
                     return removeDepartment();
 
-                case choice7:
-                    return function7();
+                case addRoleRow:
+                    return addRole();
 
-                case choice8:
-                    return function8();
+                case viewRoleData:
+                    return viewRoles();
 
                 case choice9:
                     return function9();
@@ -140,6 +140,9 @@ function viewEmployees() {
             throw err;
         }
         console.log(res);
+        for (var i = 0; i < res.length; i++) {
+            console.table([res][i]);
+        }
     });
     return runApp();
 }
@@ -207,7 +210,9 @@ function viewDepartments() {
         if (err){
             throw err;
         }
-        console.log(res);
+        for (var i = 0; i < res.length; i++) {
+            console.table([res][i]);
+        }
     });
     return runApp();
 }
@@ -238,46 +243,60 @@ function removeDepartment() {
     })
 }
 
-function function7() {
+function addRole() {
     console.log("you have reached function 7")
-    // // Prompt that Gets title and salary
-    // // Add inputs to role_table
-    // // Returns to main function runApp
-    // return inquirer
-    // .prompt([
-    //   {
-    //     name: "roleTitle",
-    //     type: "input",
-    //     message: "What is the TITLE of the role?",
-    //   },
-    // //   {
-    // //     name: "roleSalary",
-    // //     type: "number",
-    // //     message: "What is the SALARY of the role?",
-    // //   },
-    // ])
-    // .then((answer) => {
-    //   return connection.query(
-    //     "INSERT INTO role_table SET ?",
-    //     {
-    //       title: answer.roleTitle,
-    //     //   salary: answer.roleSalary,
-    //     },
-    //     (err) => {
-    //       if (err) {
-    //         throw err;
-    //       }
-    //       return runApp();
-    //     }
-    //   );
-    // });
+    // Prompt that Gets first and last name
+    //  adds inputs to employee_table
+    // Returns to main function runApp
+    return inquirer
+    .prompt([
+      {
+        name: "roleName",
+        type: "input",
+        message: "What is the NAME of the role?",
+      },
+      {
+        name: "roleSalary",
+        type: "number",
+        message: "What is the SALARY of the role?",
+      },
+      {
+        name: "departmentIdFK",
+        type: "number",
+        message: "What department does this role belong to?",
+      },
+    ])
+    .then((answer) => {
+
+      return connection.query(
+        "INSERT INTO role_table SET ?",
+        {
+          title: answer.roleName,
+          salary: answer.roleSalary,
+          department_id: answer.departmentIdFK,
+        },
+        (err) => {
+          if (err) {
+            throw err;
+          }
+          return runApp();
+        }
+      );
+    });
+
 }
 
-function function8() {
-    console.log("You have been directed to function8");
-
-    // to call back to main function after this functions prompts have been finalized.
-    runApp();
+function viewRoles() {
+    // Query to select All fields from department_table
+    connection.query("SELECT * FROM role_table", (err, res) => {
+        if (err){
+            throw err;
+        }
+        for (var i = 0; i < res.length; i++) {
+            console.table([res][i]);
+        }
+    });
+    return runApp();
 }
 
 function function9() {
